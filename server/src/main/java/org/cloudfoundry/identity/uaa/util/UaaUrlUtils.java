@@ -185,6 +185,13 @@ public abstract class UaaUrlUtils {
         return addSubdomainToUrl(url, getSubdomain());
     }
     public static String addSubdomainToUrl(String url, String subdomain) {
+        if (!hasText(subdomain)) {
+            return url;
+        }
+
+        subdomain = subdomain.trim();
+        subdomain = subdomain.endsWith(".") ? subdomain : subdomain + ".";
+
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
         builder.host(subdomain + builder.build().getHost());
         return builder.build().toUriString();
@@ -193,9 +200,10 @@ public abstract class UaaUrlUtils {
     public static String getSubdomain() {
         String subdomain = IdentityZoneHolder.get().getSubdomain();
         if (hasText(subdomain)) {
-            subdomain += ".";
+            subdomain = subdomain.trim();
+            subdomain = subdomain.endsWith(".") ? subdomain : subdomain + ".";
         }
-        return subdomain.trim();
+        return subdomain;
     }
 
     public static String extractPathVariableFromUrl(int pathParameterIndex, String path) {
